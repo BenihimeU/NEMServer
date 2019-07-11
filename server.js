@@ -11,7 +11,6 @@ var config = {
     databaseURL: "https://fir-demo-74585.firebaseio.com",
     storageBucket: "bucket.appspot.com"
 };
-
 firebase.initializeApp(config);
 // Get a reference to the database service
 var database = firebase.database();
@@ -25,8 +24,19 @@ app.get('/', (req, res) => {
 });
 
 app.post('/postDataToServer', (req, res) => {
-    if (req && req.body && req.body.channel) {
-        writeData(req.body.channel, req.body.data).then((result) => {
+    console.log(req.body);
+    if (req && req.body && req.body && req.app.type) {
+        writeData(req.body.type, req.body).then((result) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ code: 1000, status: "OK" }));
+        });
+    }
+});
+
+app.post('/postFormData', (req, res) => {
+    console.log(req.body);
+    if (req && req.body && req.body.type) {
+        writeData(req.body.type, req.body).then((result) => {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ code: 1000, status: "OK" }));
         });
@@ -35,8 +45,8 @@ app.post('/postDataToServer', (req, res) => {
 
 app.get('/getDataFromServer', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    if (req && req.query && req.query.channel) {
-        ReadData(req.query.channel).then(snap => {
+    if (req && req.query && req.query.type) {
+        ReadData(req.query.type).then(snap => {
             if (snap) {
                 var data = [];
                 snap.forEach(ss => {
@@ -48,15 +58,12 @@ app.get('/getDataFromServer', (req, res) => {
             }
         });
     }
-
-
 });
 
-const writeData = (channel, data) => {
-
-    return firebase.database().ref('arduino/' + channel).push({ ...data, "timestamp": firebase.database.ServerValue.TIMESTAMP });
+const writeData = (type, data) => {
+    return firebase.database().ref('arduino/' + type).push({ ...data, "timestamp": firebase.database.ServerValue.TIMESTAMP });
 }
 
-const ReadData = (channel) => {
-    return firebase.database().ref('/arduino/' + channel).once('value');
+const ReadData = (type) => {
+    return firebase.database().ref('/arduino/' + type).once('value');
 }
