@@ -2,18 +2,22 @@ const express = require('express');
 const firebase = require('firebase');
 const app = express();
 const bodyParser = require('body-parser');
+const IP_ADDRESS = "192.168.43.247";
+const PORT = 3000;
+
 var config = {
     apiKey: "AIzaSyCqkZJZrHDG1ePBWu9n_ebi3YxLhNuG9X0",
     authDomain: "fir-demo-74585.firebaseapp.com",
     databaseURL: "https://fir-demo-74585.firebaseio.com",
     storageBucket: "bucket.appspot.com"
 };
+
 firebase.initializeApp(config);
 // Get a reference to the database service
-var database = firebase.database();;
+var database = firebase.database();
 app.use(bodyParser());
-app.listen(3000, () => {
-    console.log("Listening on 3000");
+app.listen(PORT, IP_ADDRESS, () => {
+    console.log(`${IP_ADDRESS}, Listening on 3000`);
 });
 app.get('/', (req, res) => {
     // res.send("Node Express Mongo server running");
